@@ -1,24 +1,21 @@
 Sequelize
 =========
 Sequelize에서 필요한 내용에 대하여 간략히 설명하기 위하여 내용을 정리하였다.
-우선 설정부터 사용에 이르는 다양한 범위로 작업이 되었지만, 필요한 내용만 확인하고 싶다면 10km 마라톤을
-많은 것을 확인하고 싶다면 풀코스 마라톤 코스로 확인하면 좋을 거 같다.
-
-1. 10km 마라톤
-=================
-
-(1) impedance mismatch
------------------------
-
-Granularity: 테이블 수보다 객체의 수가 많을 수 있음. 반드시 1:1은 아님
-Inheritance: RDB는 상속을 구현하지는 못함
-Identity: DB는 동일성 개념이 정확하지만, 객체에서는 a==b(identity) or a.equals(b)(equality) 2가지 동일성이 보장됨
-Association: 객체의 관계는 단방향이지만, DB는 양방향
-Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근하지만, DB는 Join과 같은 방식으로 접근함 
+우선 왜 ORM을 사용하고 어떻게 쓰는지 먼저 살펴보자. 그리고 포함한 소스 코드에서는 sequelize + sqlite를 통하여 실제 프로젝트로 어떻게 활용할지 확인해 보자.
 
 
-(2) Setup Connection
----------------------
+ORM은 왜 사용할까?
+------------------
+
+- Granularity: 테이블 수보다 객체의 수가 많을 수 있음. 반드시 1:1은 아님
+- Inheritance: RDB는 상속을 구현하지는 못함
+- Identity: DB는 동일성 개념이 정확하지만, 객체에서는 a==b(identity) or a.equals(b)(equality) 2가지 동일성이 보장됨
+- Association: 객체의 관계는 단방향이지만, DB는 양방향
+- Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근하지만, DB는 Join과 같은 방식으로 접근함 
+
+
+연결 설정
+-----------
 설정을 위한 파일은 아래와 같은 구성된다.
 
 1. Sequelize 연결 설정
@@ -58,7 +55,7 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
   module.exports = db;
 
 
-(3) Test Connection
+Test Connection
 --------------------
 
 아래는 db접속에 대한 테스트를 위한 코드이다.
@@ -77,7 +74,7 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
     });
 
 
-(4) First Model Test
+First Model Test
 --------------------
 
 .. code-block:: javascript
@@ -101,7 +98,7 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
   });
 
 
-(5) Basic Usage
+Basic Usage
 ---------------
 - Raw Query
 
@@ -151,8 +148,7 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
     },
   })
 
-
-(6) Model Definition
+Model Definition
 --------------------
 모델과 테이블 사이의 매핑을 정의하기 위하여 define한다.
 
@@ -262,15 +258,8 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
   table_name: 직접 테이블 이름 명시
   version: optimistic locking을 enable시킴. 필드 업데이트 시 버전 정보 사용
 
-- Indexes
 
-  좀 더 상세하게 살펴봐야 함
-
-
-2. 풀코스 마라톤
-==================
-
-(1) Model Usage
+Model Usage
 ---------------
 
 - Usage
@@ -330,7 +319,7 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
     console.log(JSON.stringify(tasks))
   })
 
-(2) Query
+Query
 ---------
 아래와 같이 모델의 호출여부 뿐아니라, 정렬을 포함하는 쿼리를 사용할 수 있다.
 
@@ -375,10 +364,12 @@ Data Navigation: 데이터를 탐색하는 방식이 객체는 하나씩 접근�
   // Skip 5 instances and fetch the 5 after that
   Project.findAll({ offset: 5, limit: 5 })
 
-(3) Association
+Association
 ---------------
 
-# TODO
+Index
+-------
+
 
 Reference
 ---------
