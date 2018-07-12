@@ -455,9 +455,53 @@ sequelize에 존재하는 다양한 타입을 설명한다.
   Project.hasOne(User)
 
 
-
 Transaction
 -------------
+2가지 종류의 트랜잭션을 지원한다. 
+1) auto commit
+
+자동으로 설정할 경우에는 다음과 같은 설정을 지정한다.
+
+.. code-block:: javascript
+
+  const cls = require('continuation-local-storage'),
+  namespace = cls.createNamespace('my-very-own-namespace');
+
+  # to enable
+  const Sequelize = require('sequelize');
+  Sequelize.useCLS(namespace);
+
+  new Sequelize(....);
+
+
+2) manual commit
+
+직접 트랜잭션을 관리하기 위해서는 '{transaction:t}'를 두번째 아규먼트로 전달해야 한다.
+
+.. code-block:: javascript
+
+  return sequelize.transaction(function (t) {
+
+    // chain all your queries here. make sure you return them.
+    return User.create({
+        firstName: 'Abraham',
+        lastName: 'Lincoln'
+      }, {transaction: t}).then(function (user) {
+        return user.setShooter({
+          firstName: 'John',
+          lastName: 'Boothe'
+        }, {transaction: t});
+      });
+
+  }).then(function (result) {
+      // Transaction has been committed
+      // result is whatever the result of the promise chain returned to the transaction callback
+  }).catch(function (err) {
+    // Transaction has been rolled back
+    // err is whatever rejected the promise chain returned to the transaction callback
+  });
+
+
 
 
 
