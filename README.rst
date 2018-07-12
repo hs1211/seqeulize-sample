@@ -150,7 +150,39 @@ Basic Usage
 
 Model Definition
 --------------------
-모델과 테이블 사이의 매핑을 정의하기 위하여 define한다.
+모델과 테이블 사이의 매핑을 정의하기 위하여 define한다. 우선 아래 예제를 통하여 어떻게 사용하는지 확인하면 좋을 거 같아서 아래 예제를 먼저 살펴보기를 권한다.
+
+- 예제
+
+.. code-block:: text
+
+  CREATE TABLE IF NOT EXISTS books (
+    book_id SERIAL PRIMARY KEY,
+    pub_id INTEGER REFERENCES publisher NOT NULL,
+    title VARCHAR(64) NOT NULL,
+    author VARCHAR(16) NOT NULL,
+    stock SMALLINT NOT NULL DEFAULT 1,
+    register_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+  );
+
+.. code-block:: javascript
+
+  sequelize.define('Books', {
+      book_id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+      pub_id: {type: DataTypes.INTEGER, allowNull: false, references: {model: models.Publisher, key: 'pub_id'}},
+      title: {type: DataTypes.STRING(64), allowNull: false},
+      author: {type: DataTypes.STRING(16), allowNull: false},
+      stock: {type: DataTypes.INTEGER, defaultValue: 1},
+      register_date: {type: DataTypes.DATE, defaultValue: DataTypes.NOW}
+  }, {
+      classMethods: {},
+      tableName: 'books',
+      freezeTableName: true,
+      underscored: true,
+      timestamps: false
+  });
+
+  db.Publisher.hasMany(db.Books, {foreignKey: 'pub_id'});
 
 - 모델 사용방법 예시
 
@@ -365,10 +397,68 @@ Query
   Project.findAll({ offset: 5, limit: 5 })
 
 Association
----------------
+-------------
+sequelize에 존재하는 다양한 타입을 설명한다. 
 
-Index
--------
+- One-To-One Association
+
+  1:1관계는 정확하게 두 모델의 외래키가 1:1로 매핑되는 것을 의미한다.
+
+- belongsTo
+
+.. code-block:: javascript
+
+  const Player = this.sequelize.define('player', {});
+  const Team = this.sequelize.define('team', {});
+
+  player.belongsTo(Team);
+
+- Foreign key
+
+  아래와 같이 외래키 명을 사용할 경우 두가지 경우로 자동생성이 가능하다. 만약 직접 이름을 지정하는 경우도 아래에 추가적으로 살펴보자.
+
+.. code-block:: javascript
+
+  # underscore 옵션이 없는 경우
+  const User = this.sequelize.define('user', {/* attributes */})
+  const Company  = this.sequelize.define('company', {/* attributes */});
+
+  User.belongsTo(Company); // Will add companyId to user
+
+  # 'underscore'옵션을 켜고 생성할 경우
+  const User = this.sequelize.define('user', {/* attributes */}, {underscored: true})
+  const Company  = this.sequelize.define('company', {
+    uuid: {
+      type: Sequelize.UUID,
+      primaryKey: true
+    }
+  });
+
+  User.belongsTo(Company); // Will add company_uuid to user
+
+  # 명시적으로 컬럼명을 지정하는 경우
+  const User = this.sequelize.define('user', {/* attributes */})
+  const UserRole  = this.sequelize.define('userRole', {/* attributes */});
+
+  User.belongsTo(UserRole, {as: 'role'}); // Adds roleId to user rather than userRoleId
+
+- HasOne
+
+  타겟 모델에 관계가 1:1인경우에 사용함
+
+.. code-block:: javascript
+
+  const User = sequelize.define('user', {/* ... */})
+  const Project = sequelize.define('project', {/* ... */})
+
+  // One-way associations
+  Project.hasOne(User)
+
+
+
+Transaction
+-------------
+
 
 
 Reference

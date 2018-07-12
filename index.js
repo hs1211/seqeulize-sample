@@ -3,8 +3,8 @@
 const express = require('express'),
   bodyParser = require('body-parser'),
   morgan = require('morgan'),
-  db = require('@config/db.js'),
-  env = require('@config/env'),
+  db = require('./app/config/db'),
+  env = require('./app/config/env'),
   router = require('./app/router/index');
 
 const app = express();
